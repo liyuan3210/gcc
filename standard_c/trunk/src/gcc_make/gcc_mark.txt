@@ -1,0 +1,30 @@
+1)编译过程
+1.预处理
+gcc -E helloword.c -o helloword.i
+2.编译
+gcc -S helloword.i -o helloword.s
+3.汇编
+gcc -c helloword.s -o helloword.o
+4.链接
+gcc helloword.o -o helloword
+
+2）其他选项介绍
+1.优化选项
+-O（提高优化）
+-O2（优化更彻底）
+测试:time ./aplicationName
+
+2.添加引入项
+-I /添加头文件标准库文件目录找<stdio.h>（/usr/include）编译阶段
+-L /添加指定库文件目录（/usr/lib） 连接阶段
+-l /添加函数库libm.a（如：数学函数库） 连接阶段
+
+3.动态连接，静态连接
+-static (默认为动态连接)
+加上此选项后编译后的目标会把标准函数库里面的函数一起打包到目标中
+
+4.警告信息
+-Wall 生成所有警告信息
+-w 不成成所有警告信息
+-D 定义一个宏（类似#define）
+

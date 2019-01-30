@@ -1,0 +1,14 @@
+	在vm+redhat安装2.6.39内核时出现的错误
+
+启动时报could not find filesystem '/dev/root' 
+解决方法
+a.通过make menuconfig选中以下对应的选项
+General setup -->              
+        [*] enable deprecated sysfs features to support old userspace tools
+成功时下面那个也*了的
+
+b.修改.config文件
+	修改.config文件中CONFIG_SYSFS_DEPRECATED_V2，将原本被注释掉的
+        CONFIG_SYSFS_DEPRECATED_V2 改成CONFIG_SYSFS_DEPRECATED_V2=y
+
+-----------------------------------------------------------------------------

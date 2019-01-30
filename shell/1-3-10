@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#变量counter用于统计文件的数目
+counter=0
+
+#变量files遍历一遍当前文件夹
+for files in *
+do
+	#判断的files是否是文件，如果是就将counter变量的值加一再赋给自己
+	if [ -f "$files" ]
+	then
+		counter=`expr $counter + 1`
+	fi
+done
+
+#输出结果
+echo "There are $counter files in `pwd`"

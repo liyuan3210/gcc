@@ -1,0 +1,128 @@
+x86平台ubuntu14下获取内核源文件：
+1.查看当前系统原码版本
+
+$ apt-cache search linux-source
+linux-source - Linux kernel source with Ubuntu patches
+linux-source-2.6.35 - Linux kernel source for version 2.6.35 with Ubuntu patches
+
+2.下载源码
+$ sudo apt-get install linux-source-2.6.35
+
+下载完成后，在/usr/src目录中，可以看到压缩包
+$ ls
+linux-headers-2.6.35-22 linux-source-2.6.35
+linux-headers-2.6.35-22-generic linux-source-2.6.35.tar.bz2
+
+*
+ubuntu14 apt-get install libncurses5-dev
+---------------------------------------------------------------------------------------------------
+一.insmod依赖关系模块时报错(-1 Invalid parameters)
+问题描述
+有两个模块，mod1和mod2。
+在mod1中定义了func()函数，并且经EXPORT_SYMBOL()导出。
+在mod2中extern func()，调用func()。
+编译模块mod2，成功。
+
+加载mod2时，输出：
+insmod: error inserting 'mod2.ko': -1 Invalid parameters
+
+dmesg查看：
+mod2: no symbol version for func
+mod2: Unknown symbol func (err -22)
+内核符号表
+
+ 
+Kernel symbol table，内核符号表。
+Linux内核的符号表位于两个部分：
+静态的符号表，即内核映像vmlinuz的符号表（System.map）
+动态的符号表，即内核模块的符号表（/proc/kallsyms）
+
+ 
+
+符号标志
+T    External text
+t     Local text
+D    External initialized data
+d    Local initialized data
+B    External zeroed data
+b    Local zeroed data
+A    External absolute
+a    Local absolute
+U    External undefined
+G    External small initialized data
+g    Local small initialized data
+I    Init section
+S    External small zeroed data
+s    Local small zeroed data
+R    External read only
+r    Local read only
+C    Common
+E    Small common
+
+
+我们可以看到，大写标志都是全局的、可被外部引用的，而小写标志都是局部的、不能被外部引用的。
+可以用nm命令查看可执行文件的符号表（nm - list symbols from object files）。
+insmod使用公共内核符号表来解析模块中未定义的符号。公共内核符号表中包含了所有的全局函数和全局
+变量的地址。当模块被装入内核后，它所导出的任何内核符号都会变成内核符号表的一部分。
+EXPORT_SYMBOL(name); // 所有模块可见
+EXPORT_SYMBOL_GPL(nae); // 含有GPL许可证模块可见
+
+ 
+
+问题解决:
+了解了什么是内核符号表之后，我们回到之前的问题。
+我们查看/proc/kallsyms，发现mod1的func函数的标志为t，而此标志表示函数是局部的。
+此问题是内核2.6.26之后版本的bug，并且不会被修复。
+解决办法有几种。
+（1）把mod1的Module.symvers放到mod2中，这样在编译mod2时符号信息会自动链接进去。
+（2）在mod2的Makefile中添加符号信息
+echo '0x01873e3f        func  mod1 EXPORT_SYMBOL_GPL' > Module.symvers
+这样mod2在编译时就知道mod1中func符号的地址。
+
+Q：这个问题是由什么引起的呢？
+A：生成mod2的时候不知道mod1中func的校验码，mod2加载时检查校验码出错。
+在内核主线代码树的一个提交修改了内核挂载模块时的函数版本校验机制，使得在挂载模块时候对于编译
+时个别函数没有确定CRC校验值无法通过check_version函数检查。
+这是内核有意要禁止存在个别无版本校验信息的函数的模块挂载。
+---------------------------------------------------------------------------------------------------
+x86平台ubuntu内核替换两种方法:
+快速编译:
+make -j3(当前cpu核心数+1)
+相当于执行make bzImage,make modules
+安装内核其实就是：
+拷贝.config,bzImage,System.map到/boot下面，/lib/modules/linux-3.12.5目录到(移植目标)/lib/modules
+1）常规替换
+ubuntu:
+  make modules_install后执行 update-grub
+red hat:
+（1）将生成的linux-3.12.5/.config 拷贝到要替换内核系统的/boot下，并重命名为config-3.12.5
+
+（2）将生成的linux-3.12.5/arch/x86-64/boot/bzImage 拷贝到要替换内核系统的/boot下，并重命名为vmlinuz-3.12.5（注：这里需特别注意拷贝后的文件名变为vmlinuz-x.x.x）。
+
+（3）将生成的linux-3.12.5/System.map 拷贝到要替换内核系统的/boot下，并重命名为System.map-3.12.5
+
+（4）将make modules_install生成的系统目录/lib/modules/linux-3.12.5 拷贝到要替换内核系统的/lib/modules下。
+
+本机替换直接：make install
+
+2）非本机打包替换
+
+
+---------------------------------------------------------------------------------------------------
+二.在vm+redhat安装2.6.39内核时出现的错误
+启动时报could not find filesystem '/dev/root' 
+解决方法
+a.通过make menuconfig选中以下对应的选项
+General setup -->              
+        [*] enable deprecated sysfs features to support old userspace tools
+成功时下面那个也*了的
+
+b.修改.config文件
+	修改.config文件中CONFIG_SYSFS_DEPRECATED_V2，将原本被注释掉的
+        CONFIG_SYSFS_DEPRECATED_V2 改成CONFIG_SYSFS_DEPRECATED_V2=y
+---------------------------------------------------------------------------------------------------
+make时错误:
+make: 警告：检测到时钟错误。您的创建可能是不完整的
+原因：如果上一次编译时为20060101,你现在再编译就会报这样的错误.
+解决：把时间改了或运行下来命令再make
+find . -type f -exec touch {} \;

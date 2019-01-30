@@ -1,0 +1,26 @@
+#helloword example
+#make文件为makefile/Makefile直接输入：make就可以了
+#如果make文件不为makefile/Makefile需要加入-f参数：make -f fileName
+
+#定义变量
+
+obj=pointerStructure
+
+$(obj):o/pointerStructure.o
+#每个命令到的开头都时以“TAB”符号开始的
+	 gcc o/pointerStructure.o -o pointerStructure
+
+o/pointerStructure.o:s/pointerStructure.s
+	 gcc -c s/pointerStructure.s -o o/pointerStructure.o
+
+s/pointerStructure.s:i/pointerStructure.i
+	 gcc -g -S i/pointerStructure.i -o s/pointerStructure.s
+
+i/pointerStructure.i:c/pointerStructure.c
+	 gcc -E c/pointerStructure.c -o i/pointerStructure.i
+
+clean:#删除所有make的文件
+                                                    #"\"为换行标记
+	rm pointerStructure o/pointerStructure.o \
+	s/pointerStructure.s i/pointerStructure.i 
+
