@@ -15,9 +15,12 @@ obj=twoCprogram
 #同下
 #hello:main.o func1.o func2.o
 #	@gcc $^ -o $@ (加上@，能够屏蔽屏幕回显)
+#
+#执行顺序关系：根据依赖关系自底向上执行命令
 ########################################################
 #
 
+# 下面的o/,s/,i/表示当前文件目录名称
 $(obj):o/twoCprogram.o
 #每个命令到的开头都时以“TAB”符号开始的
 	 gcc o/twoCprogram.o -o twoCprogram
