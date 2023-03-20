@@ -8,7 +8,7 @@ HelloC2(4101,0x104397e00) malloc: can't allocate region
 :*** mach_vm_map(size=1073741824, flags: 100) failed (error code=3)
  */
 void mm(){
-   char *p = malloc(sizeof(char)*1024*1024);
+   char *p = malloc(sizeof(char)*1024);
 }
 int main()
 {
