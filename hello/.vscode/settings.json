@@ -1,0 +1,17 @@
+{
+    "clangd.path": "D:\\soft\\dev\\clangd_19.1.2\\bin\\clangd.exe",
+    "clangd.arguments": [
+        "${workspaceFolder}/**",
+        "-I D:\\soft\\dev\\mingw64\\include",
+        "-I D:\\soft\\dev\\mingw64\\x86_64-w64-mingw32\\include"
+    ],
+    "clangd.enable": false
+    // "gnuGlobal.globalExecutable": "D:\\soft\\dev\\global\\bin\\global.exe",
+    // "gnuGlobal.gtagsExecutable": "D:\\soft\\dev\\global\\bin\\gtags.exe",
+    // "C_Cpp.default.includePath": [
+    //     "${workspaceFolder}/**",
+    //       "D:\\soft\\dev\\mingw64\\include",
+    //       "D:\\soft\\dev\\mingw64\\x86_64-w64-mingw32\\include"
+    // ],
+    // "C_Cpp.default.compilerPath": "D:\\soft\\dev\\mingw64\\bin\\gcc.exe"
+}

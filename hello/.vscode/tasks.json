@@ -6,13 +6,11 @@
     {
       "type": "cppbuild",
       "label": "gccBuildActiveFile",
-      "command": "D:\\soft\\dev\\mingw64\\bin\\gcc.exe",
+      "command": "D:/soft/dev/mingw64/bin/gcc.exe",
       "args": [
-        "-fdiagnostics-color=always",
-        "-g",
         "${file}",
         "-o",
-        "${fileDirname}\\${fileBasenameNoExtension}.exe"
+        "${fileDirname}/${fileBasenameNoExtension}.exe"
       ],
       "options": {
         "cwd": "${fileDirname}"
